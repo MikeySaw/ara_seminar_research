@@ -11,3 +11,7 @@ They provide package versions that are not compatible with eachother. Pandas 1.2
 
 ### The fix: 
 Just download Pandas 1.1
+
+
+
+our [Google Doc](https://docs.google.com/document/d/1NwZypYE2r4qWeEWYPY2tegbrlSTPtCY4laGUlINOYp0/edit)
