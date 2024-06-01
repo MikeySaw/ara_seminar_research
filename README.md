@@ -48,6 +48,6 @@ Run the following command from this directory:
 
 As output, a prediction file named after the test dish(es) will be created. Here the best alignment computed for each action of the test recipes is saved.
 
-### Google Documentation for our experiments.
+## Google Documentation for our experiments.
 our [Google Doc](https://docs.google.com/document/d/1NwZypYE2r4qWeEWYPY2tegbrlSTPtCY4laGUlINOYp0/edit)
 
