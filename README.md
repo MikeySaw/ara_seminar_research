@@ -22,6 +22,10 @@ pip uninstall torch
 pip3 install torch==1.7.1  --force-reinstall  --extra-index-url https://download.pytorch.org/whl/cu110
 ```
 
+## Data
+Download the data from [here](https://github.com/interactive-cookbook/alignment-models/tree/main/data) and put it into `data/` in the root of your project to reproduce the results.
+
+
 ## Training
 To train the model, run the following command from root directory:
 
