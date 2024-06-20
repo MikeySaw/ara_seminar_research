@@ -44,54 +44,6 @@ from utils import (
     load_vocabulary
 )
 
-# from script main.py
-# no more function, merged ith train-related functions
-
-device = torch.device(CUDA_DEVICE if torch.cuda.is_available() else "cpu")
-flair.device = device
-    
-parser = argparse.ArgumentParser(description = """Automatic Alignment model""")
-parser.add_argument('model_name', type=str, help="""Model Name; one of {'Simple', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature'}""") # TODO: add options for fat graphs (with parents and grandparents)
-parser.add_argument('--embedding_name', type=str, default='bert', help='Embedding Name (Default is bert, alternative: elmo)')
-parser.add_argument('--cuda-device', type=str, help="""Select cuda; default: cuda:0""")
-args = parser.parse_args()
-
-model_name = args.model_name
-    
-embedding_name = args.embedding_name
-
-if args.cuda_device:
-    device = torch.device("cuda:"+args.cuda_device if torch.cuda.is_available() else "cpu")
-    flair.device = device 
-
-print("-------Loading Model-------")
-
-# Loading Model definition
-    
-if embedding_name == 'bert' :
-
-    tokenizer = BertTokenizer.from_pretrained(
-        "bert-base-uncased"
-    )  # Bert Tokenizer
-    
-    emb_model = BertModel.from_pretrained("bert-base-uncased", output_hidden_states=True).to(
-        device
-    )  # Bert Model for Embeddings
-        
-    embedding_dim = emb_model.config.to_dict()[
-        "hidden_size"
-    ]  # BERT embedding dimension
-    
-    # print(bert)
-    
-elif embedding_name == 'elmo' :
-        
-    tokenizer = Sentence #Flair sentence for ELMo embeddings
-       
-    emb_model = ELMoEmbeddings('small')
-        
-    embedding_dim = emb_model.embedding_length
-
 # -----------------------------------------------------------------------
 
 
@@ -869,6 +821,54 @@ class Folds_Test:
        
 # final part of main.py
 if __name__ == "__main__":
+
+    # from script main.py
+    # no more function, merged ith train-related functions
+
+    device = torch.device(CUDA_DEVICE if torch.cuda.is_available() else "cpu")
+    flair.device = device
+        
+    parser = argparse.ArgumentParser(description = """Automatic Alignment model""")
+    parser.add_argument('model_name', type=str, help="""Model Name; one of {'Simple', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature'}""") # TODO: add options for fat graphs (with parents and grandparents)
+    parser.add_argument('--embedding_name', type=str, default='bert', help='Embedding Name (Default is bert, alternative: elmo)')
+    parser.add_argument('--cuda-device', type=str, help="""Select cuda; default: cuda:0""")
+    args = parser.parse_args()
+
+    model_name = args.model_name
+        
+    embedding_name = args.embedding_name
+
+    if args.cuda_device:
+        device = torch.device("cuda:"+args.cuda_device if torch.cuda.is_available() else "cpu")
+        flair.device = device 
+
+    print("-------Loading Model-------")
+
+    # Loading Model definition
+        
+    if embedding_name == 'bert' :
+
+        tokenizer = BertTokenizer.from_pretrained(
+            "bert-base-uncased"
+        )  # Bert Tokenizer
+        
+        emb_model = BertModel.from_pretrained("bert-base-uncased", output_hidden_states=True).to(
+            device
+        )  # Bert Model for Embeddings
+            
+        embedding_dim = emb_model.config.to_dict()[
+            "hidden_size"
+        ]  # BERT embedding dimension
+        
+        # print(bert)
+        
+    elif embedding_name == 'elmo' :
+            
+        tokenizer = Sentence #Flair sentence for ELMo embeddings
+        
+        emb_model = ELMoEmbeddings('small')
+            
+        embedding_dim = emb_model.embedding_length
 
     paths = [
         "./results1",
