@@ -29,7 +29,7 @@ Download the data from [here](https://github.com/interactive-cookbook/alignment-
 ## Training
 To train the model, run the following command from root directory:
 
-`python train.py [model_name] --embedding_name [embedding_name]`
+`python train.py [model_name] --embedding_name [embedding_name] --fold [fold]`
 
 where `[model_name]` could be one of the following:
 - `Sequence` : Sequential Ordering of Alignments
@@ -42,7 +42,9 @@ and `[embedding_name]` could be one of the following:
 - `bert` : BERT embeddings (default)
 - `elmo` : ELMO embeddings
 
-
+additionally `[fold]` is a number between 1 and 10:
+    Here you specify on which fold to run the validation on
+    
 ## Testing
 To test the model, choose the application from the following:
 
