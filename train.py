@@ -63,8 +63,8 @@ flair.device = device
 parser = argparse.ArgumentParser(description = """Automatic Alignment model""")
 parser.add_argument('model_name', type=str, help="""Model Name; one of {'Simple', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature'}""") # TODO: add options for fat graphs (with parents and grandparents)
 parser.add_argument('--embedding_name', type=str, default='bert', help='Embedding Name (Default is bert, alternative: elmo)')
-parser.add_argument('--cuda-device', type=str, help="""Select cuda; default: cuda:0""")
-parser.add_argument('--fold', type=int, help="""Fold Number; number in range 1 to 10""")
+parser.add_argument('--cuda-device', type=str, default="0", help="""Select cuda; default: cuda:0""")
+parser.add_argument('--fold', type=int, default=1, help="""Fold Number; number in range 1 to 10""")
 args = parser.parse_args()
 
 model_name = args.model_name
