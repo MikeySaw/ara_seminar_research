@@ -868,89 +868,101 @@ class Folds_Test:
 
        
 # final part of main.py
+if __name__ == "__main__":
 
-TT = Folds_Test()  # calling the Training class
+    paths = [
+        "./results1",
+        "./results2",
+        "./results3",
+        "./results4"
+    ]
 
-if model_name == "Alignment-with-feature":
+    for path in paths:
+        if not os.path.exists(path):
+            os.makedirs(path)
 
-     model = AlignmentModel(embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device).to(
-         device
-     )  # Out Alignment Model with features
+    TT = Folds_Test()  # calling the Training class
 
-     #print(model)
-     """for name, param in model.named_parameters():
-         if param.requires_grad:
-                 print(name)"""
+    if model_name == "Alignment-with-feature":
 
-     optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
-     criterion = nn.CrossEntropyLoss()  # Loss function
+        model = AlignmentModel(embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device).to(
+            device
+        )  # Out Alignment Model with features
 
-     ################ Cross Validation Folds #################
+        #print(model)
+        """for name, param in model.named_parameters():
+            if param.requires_grad:
+                    print(name)"""
 
-     TT.run_folds_test(
-         embedding_name, 
-         emb_model, tokenizer, model, optimizer, criterion, MAX_EPOCHS, device
-     )
+        optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
+        criterion = nn.CrossEntropyLoss()  # Loss function
 
-elif model_name == "Alignment-no-feature":
+        ################ Cross Validation Folds #################
 
-     model = AlignmentModel(
-         embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device, False
-     ).to(
-         device
-     )  # Out Alignment Model w/o features
+        TT.run_folds_test(
+            embedding_name, 
+            emb_model, tokenizer, model, optimizer, criterion, MAX_EPOCHS, device
+        )
 
-     print(model)
+    elif model_name == "Alignment-no-feature":
 
-     optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
-     criterion = nn.CrossEntropyLoss()  # Loss function
+        model = AlignmentModel(
+            embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device, False
+        ).to(
+            device
+        )  # Out Alignment Model w/o features
 
-     TT.run_folds_test(
-         embedding_name,
-         emb_model, 
-         tokenizer,
-         model,
-         optimizer,
-         criterion,
-         MAX_EPOCHS,
-         device,
-         False,
-     )
+        print(model)
 
-elif model_name == "Cosine_similarity":
+        optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
+        criterion = nn.CrossEntropyLoss()  # Loss function
 
-     cosine_similarity_model = SimpleModel(embedding_dim, device).to(device) # Simple Cosine Similarity Baseline
+        TT.run_folds_test(
+            embedding_name,
+            emb_model, 
+            tokenizer,
+            model,
+            optimizer,
+            criterion,
+            MAX_EPOCHS,
+            device,
+            False,
+        )
 
-     print(cosine_similarity_model)
+    elif model_name == "Cosine_similarity":
 
-     print("-------Testing (Simple Baseline) -------")
+        cosine_similarity_model = SimpleModel(embedding_dim, device).to(device) # Simple Cosine Similarity Baseline
 
-     TT.test_simple_model(embedding_name, emb_model, tokenizer, cosine_similarity_model, device)
-        
-        
-elif model_name == 'Naive':
-        
-     naive_model = NaiveModel(device) # Naive Common Action Pair Heuristics Baseline
-        
-     print('Common Action Pair Heuristics Model')
-        
-     ################ Cross Validation Folds #################
-        
-     TT.run_naive_folds(
-         naive_model
-         )
-        
-elif model_name == 'Sequence':
-        
-     sequence_model = SequenceModel()
-        
-     print('Sequential Alignments')
-        
-     sequence_model.test_sequence_model()
+        print(cosine_similarity_model)
 
-else:
+        print("-------Testing (Simple Baseline) -------")
 
-     print(
-         "Incorrect Argument: Model_name should be ['Cosine_similarity', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature']"
-     )
+        TT.test_simple_model(embedding_name, emb_model, tokenizer, cosine_similarity_model, device)
+            
+            
+    elif model_name == 'Naive':
+            
+        naive_model = NaiveModel(device) # Naive Common Action Pair Heuristics Baseline
+            
+        print('Common Action Pair Heuristics Model')
+            
+        ################ Cross Validation Folds #################
+            
+        TT.run_naive_folds(
+            naive_model
+            )
+            
+    elif model_name == 'Sequence':
+            
+        sequence_model = SequenceModel()
+            
+        print('Sequential Alignments')
+            
+        sequence_model.test_sequence_model()
+
+    else:
+
+        print(
+            "Incorrect Argument: Model_name should be ['Cosine_similarity', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature']"
+        )
 

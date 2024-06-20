@@ -26,6 +26,7 @@ from model import AlignmentModel
 from cosine_similarity_model import SimpleModel
 from sequence_model import SequenceModel
 from naive_model import NaiveModel
+from test import Folds_Test
 from transformers import BertTokenizer, BertModel
 from flair.data import Sentence
 from flair.embeddings import ELMoEmbeddings
@@ -594,6 +595,7 @@ class Folds_Train:
         # TODO graph should show epoch progress
         #create_acc_loss_graph(saved_metric_path, device, saved_graph_path)
         create_acc_loss_graph(epoch_list, train_loss_list, valid_loss_list, train_accuracy_list, valid_accuracy_list, device, saved_graph_path)
+        print(f"Saved plot to {saved_graph_path}")
 
         # do more verbose testing with Iris' code for F1, precision, recall (it's enough to get these metrics at the end of training, i.e. from the best model)
         final_train_accuracy = train_accuracy_list[-1]
@@ -969,103 +971,116 @@ class Folds_Train:
 
 # final part of main.py
 
-TT = Folds_Train()  # calling the Training class
+if __name__ == "__main__":
 
-if model_name == "Alignment-with-feature":
+    paths = [
+        "./results1",
+        "./results2",
+        "./results3",
+        "./results4"
+    ]
 
-     model = AlignmentModel(embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device).to(
-         device
-     )  # Out Alignment Model with features
+    for path in paths:
+        if not os.path.exists(path):
+            os.makedirs(path)
 
-     print(model)
-     """for name, param in model.named_parameters():
-         if param.requires_grad:
-                 print(name)"""
+    TT = Folds_Train()  # calling the Training class
 
-     # optimizer for training
-     scheduler  = None
+    if model_name == "Alignment-with-feature":
 
-     if OPTIMIZER == "Adam":
-         optimizer = optim.Adam(model.parameters(), lr=LR) 
-     elif OPTIMIZER == "DefaultAdam":
-         optimizer =optim.Adam(model.parameters()) # default: lr=0.001 
-     elif OPTIMIZER == "SGD":
-         optimizer = optim.SGD(model.parameters(), lr=0.1) # lr as suggested in example in torch documentation
-         scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9, verbose=True) # gamma as suggested in example in torch documentation of optimizers
-     elif OPTIMIZER == "RMSprop":
-         optimizer = optim.RMSprop(model.parameters())
-     elif OPTIMIZER == "Adagrad":
-         optimizer = optim.Adagrad(model.parameters(), lr_decay=0.9) # using lr_edcay for comparability with SGD(?)
-             
-     criterion = nn.CrossEntropyLoss()  # Loss function
+        model = AlignmentModel(embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device).to(
+            device
+        )  # Out Alignment Model with features
 
-     ################ Cross Validation Folds #################
+        print(model)
+        """for name, param in model.named_parameters():
+            if param.requires_grad:
+                    print(name)"""
 
-     if scheduler:
-          TT.run_folds_train(embedding_name,emb_model, tokenizer, model, optimizer, criterion, MAX_EPOCHS, device, PATIENCE, scheduler=scheduler)
-     else:
-          TT.run_folds_train(embedding_name,emb_model, tokenizer, model, optimizer, criterion, MAX_EPOCHS, device, PATIENCE, scheduler=scheduler)
+        # optimizer for training
+        scheduler  = None
 
-elif model_name == "Alignment-no-feature":
+        if OPTIMIZER == "Adam":
+            optimizer = optim.Adam(model.parameters(), lr=LR) 
+        elif OPTIMIZER == "DefaultAdam":
+            optimizer =optim.Adam(model.parameters()) # default: lr=0.001 
+        elif OPTIMIZER == "SGD":
+            optimizer = optim.SGD(model.parameters(), lr=0.1) # lr as suggested in example in torch documentation
+            scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9, verbose=True) # gamma as suggested in example in torch documentation of optimizers
+        elif OPTIMIZER == "RMSprop":
+            optimizer = optim.RMSprop(model.parameters())
+        elif OPTIMIZER == "Adagrad":
+            optimizer = optim.Adagrad(model.parameters(), lr_decay=0.9) # using lr_edcay for comparability with SGD(?)
+                
+        criterion = nn.CrossEntropyLoss()  # Loss function
 
-     model = AlignmentModel(
-         embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device, False
-     ).to(
-         device
-     )  # Out Alignment Model w/o features
+        ################ Cross Validation Folds #################
 
-     print(model)
+        if scheduler:
+            TT.run_folds_train(embedding_name,emb_model, tokenizer, model, optimizer, criterion, MAX_EPOCHS, device, PATIENCE, scheduler=scheduler)
+        else:
+            TT.run_folds_train(embedding_name,emb_model, tokenizer, model, optimizer, criterion, MAX_EPOCHS, device, PATIENCE, scheduler=scheduler)
 
-     optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
-     criterion = nn.CrossEntropyLoss()  # Loss function
+    elif model_name == "Alignment-no-feature":
 
-     TT.run_folds_train(
-         embedding_name,
-         emb_model, 
-         tokenizer,
-         model,
-         optimizer,
-         criterion,
-         MAX_EPOCHS,
-         device,
-         PATIENCE,
-         False,
-     )
+        model = AlignmentModel(
+            embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device, False
+        ).to(
+            device
+        )  # Out Alignment Model w/o features
 
-elif model_name == "Cosine_similarity":
+        print(model)
 
-     cosine_similarity_model = SimpleModel(embedding_dim, device).to(device) # Simple Cosine Similarity Baseline
+        optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
+        criterion = nn.CrossEntropyLoss()  # Loss function
 
-     print(cosine_similarity_model)
+        TT.run_folds_train(
+            embedding_name,
+            emb_model, 
+            tokenizer,
+            model,
+            optimizer,
+            criterion,
+            MAX_EPOCHS,
+            device,
+            PATIENCE,
+            False,
+        )
 
-     print("-------Testing (Simple Baseline) -------")
+    elif model_name == "Cosine_similarity":
 
-     TT.test_simple_model(embedding_name, emb_model, tokenizer, cosine_similarity_model, device)
-        
-        
-elif model_name == 'Naive':
-        
-     naive_model = NaiveModel(device) # Naive Common Action Pair Heuristics Baseline
-        
-     print('Common Action Pair Heuristics Model')
-        
-     ################ Cross Validation Folds #################
-        
-     TT.run_naive_folds(
-         naive_model
-         )
-        
-elif model_name == 'Sequence':
-        
-     sequence_model = SequenceModel()
-        
-     print('Sequential Alignments')
-        
-     sequence_model.test_sequence_model()
+        cosine_similarity_model = SimpleModel(embedding_dim, device).to(device) # Simple Cosine Similarity Baseline
 
-else:
+        print(cosine_similarity_model)
 
-     print(
-         "Incorrect Argument: Model_name should be ['Cosine_similarity', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature']"
-     )
-   
+        print("-------Testing (Simple Baseline) -------")
+
+        TT.basic_training(embedding_name, emb_model, tokenizer, cosine_similarity_model, device)
+            
+            
+    elif model_name == 'Naive':
+            
+        naive_model = NaiveModel(device) # Naive Common Action Pair Heuristics Baseline
+            
+        print('Common Action Pair Heuristics Model')
+            
+        ################ Cross Validation Folds #################
+            
+        TT.run_naive_folds_train(
+            naive_model
+            )
+            
+    elif model_name == 'Sequence':
+            
+        sequence_model = SequenceModel()
+            
+        print('Sequential Alignments')
+            
+        sequence_model.test_sequence_model()
+
+    else:
+
+        print(
+            "Incorrect Argument: Model_name should be ['Cosine_similarity', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature']"
+        )
+    
