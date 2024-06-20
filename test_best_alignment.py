@@ -44,57 +44,6 @@ from utils import (
     load_vocabulary
 )
 
-# from script main.py
-# no more function, merged ith train-related functions
-
-device = torch.device(CUDA_DEVICE if torch.cuda.is_available() else "cpu")
-flair.device = device
-    
-parser = argparse.ArgumentParser(description = """Automatic Alignment model""")
-parser.add_argument('model_name', type=str, help="""Model Name; one of {'Simple', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature'}""") # TODO: add options for fat graphs (with parents and grandparents)
-parser.add_argument('--embedding_name', type=str, default='bert', help='Embedding Name (Default is bert, alternative: elmo)')
-parser.add_argument('--cuda-device', type=str, help="""Select cuda; default: cuda:0""")
-parser.add_argument('--fold', type=int, help="""Fold Number; number in range 1 to 10""")
-args = parser.parse_args()
-
-model_name = args.model_name
-    
-embedding_name = args.embedding_name
-
-if args.cuda_device:
-    device = torch.device("cuda:"+args.cuda_device if torch.cuda.is_available() else "cpu")
-    flair.device = device 
-
-fold = args.fold
-
-print("-------Loading Model-------")
-
-# Loading Model definition
-    
-if embedding_name == 'bert' :
-
-    tokenizer = BertTokenizer.from_pretrained(
-        "bert-base-uncased"
-    )  # Bert Tokenizer
-    
-    emb_model = BertModel.from_pretrained("bert-base-uncased", output_hidden_states=True).to(
-        device
-    )  # Bert Model for Embeddings
-        
-    embedding_dim = emb_model.config.to_dict()[
-        "hidden_size"
-    ]  # BERT embedding dimension
-    
-    # print(bert)
-    
-elif embedding_name == 'elmo' :
-        
-    tokenizer = Sentence #Flair sentence for ELMo embeddings
-       
-    emb_model = ELMoEmbeddings('small')
-        
-    embedding_dim = emb_model.embedding_length
-
 # -----------------------------------------------------------------------
 
 
@@ -899,92 +848,144 @@ class Folds_Test:
         print("Fold Results saved in ==>" + save_result_path)
  
 # -------------------------------------------------------------------------------
+if __name__ == "__main__":
+
+    # from script main.py
+    # no more function, merged ith train-related functions
+
+    device = torch.device(CUDA_DEVICE if torch.cuda.is_available() else "cpu")
+    flair.device = device
+        
+    parser = argparse.ArgumentParser(description = """Automatic Alignment model""")
+    parser.add_argument('model_name', type=str, help="""Model Name; one of {'Simple', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature'}""") # TODO: add options for fat graphs (with parents and grandparents)
+    parser.add_argument('--embedding_name', type=str, default='bert', help='Embedding Name (Default is bert, alternative: elmo)')
+    parser.add_argument('--cuda-device', type=str, default="0", help="""Select cuda; default: cuda:0""")
+    parser.add_argument('--fold', type=int, default=1, help="""Fold Number; number in range 1 to 10""")
+    args = parser.parse_args()
+
+    model_name = args.model_name
+        
+    embedding_name = args.embedding_name
+
+    if args.cuda_device:
+        device = torch.device("cuda:"+args.cuda_device if torch.cuda.is_available() else "cpu")
+        flair.device = device 
+
+    fold = args.fold
+
+    print("-------Loading Model-------")
+
+    # Loading Model definition
+        
+    if embedding_name == 'bert' :
+
+        tokenizer = BertTokenizer.from_pretrained(
+            "bert-base-uncased"
+        )  # Bert Tokenizer
+        
+        emb_model = BertModel.from_pretrained("bert-base-uncased", output_hidden_states=True).to(
+            device
+        )  # Bert Model for Embeddings
+            
+        embedding_dim = emb_model.config.to_dict()[
+            "hidden_size"
+        ]  # BERT embedding dimension
+        
+        # print(bert)
+        
+    elif embedding_name == 'elmo' :
+            
+        tokenizer = Sentence #Flair sentence for ELMo embeddings
+        
+        emb_model = ELMoEmbeddings('small')
+            
+        embedding_dim = emb_model.embedding_length
 
        
-# final part of main.py
+    # final part of main.py
 
-TT = Folds_Test()  # calling the Training class
+    TT = Folds_Test()  # calling the Training class
 
-if model_name == "Alignment-with-feature":
+    if model_name == "Alignment-with-feature":
 
-     model = AlignmentModel(embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device).to(
-         device
-     )  # Out Alignment Model with features
+        model = AlignmentModel(embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device).to(
+            device
+        )  # Out Alignment Model with features
 
-     #print(model)
-     """for name, param in model.named_parameters():
-         if param.requires_grad:
-                 print(name)"""
+        #print(model)
+        """for name, param in model.named_parameters():
+            if param.requires_grad:
+                    print(name)"""
 
-     optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
-     criterion = nn.CrossEntropyLoss()  # Loss function
+        optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
+        criterion = nn.CrossEntropyLoss()  # Loss function
 
-     ################ Cross Validation Folds #################
+        ################ Cross Validation Folds #################
 
-     TT.run_folds_test(
-         embedding_name, 
-         emb_model, tokenizer, model, optimizer, criterion, MAX_EPOCHS, device
-     )
+        TT.run_folds_test(
+            embedding_name, 
+            emb_model, tokenizer, model, optimizer, criterion, MAX_EPOCHS, device
+        )
 
-elif model_name == "Alignment-no-feature":
+    elif model_name == "Alignment-no-feature":
 
-     model = AlignmentModel(
-         embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device, False
-     ).to(
-         device
-     )  # Out Alignment Model w/o features
+        model = AlignmentModel(
+            embedding_dim, HIDDEN_DIM1, HIDDEN_DIM2, OUTPUT_DIM, DROPOUT0, DROPOUT1, DROPOUT2, device, False
+        ).to(
+            device
+        )  # Out Alignment Model w/o features
 
-     print(model)
+        print(model)
 
-     optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
-     criterion = nn.CrossEntropyLoss()  # Loss function
+        optimizer = optim.Adam(model.parameters(), lr=LR)  # optimizer for training
+        criterion = nn.CrossEntropyLoss()  # Loss function
 
-     TT.run_folds_test(
-         embedding_name,
-         emb_model, 
-         tokenizer,
-         model,
-         optimizer,
-         criterion,
-         MAX_EPOCHS,
-         device,
-         False,
-     )
+        TT.run_folds_test(
+            embedding_name,
+            emb_model, 
+            tokenizer,
+            model,
+            optimizer,
+            criterion,
+            MAX_EPOCHS,
+            device,
+            False,
+        )
 
-elif model_name == "Cosine_similarity":
+    elif model_name == "Cosine_similarity":
 
-     cosine_similarity_model = SimpleModel(embedding_dim, device).to(device) # Simple Cosine Similarity Baseline
+        cosine_similarity_model = SimpleModel(embedding_dim, device).to(device) # Simple Cosine Similarity Baseline
 
-     print(cosine_similarity_model)
+        print(cosine_similarity_model)
 
-     print("-------Testing (Simple Baseline) -------")
+        print("-------Testing (Simple Baseline) -------")
 
-     TT.test_simple_model(embedding_name, emb_model, tokenizer, cosine_similarity_model, device)
-        
-        
-elif model_name == 'Naive':
-        
-     naive_model = NaiveModel(device) # Naive Common Action Pair Heuristics Baseline
-        
-     print('Common Action Pair Heuristics Model')
-        
-     ################ Cross Validation Folds #################
-        
-     TT.run_naive_folds(
-         naive_model
-         )
-        
-elif model_name == 'Sequence':
-        
-     sequence_model = SequenceModel()
-        
-     print('Sequential Alignments')
-        
-     sequence_model.test_sequence_model()
+        TT.test_simple_model(embedding_name, emb_model, tokenizer, cosine_similarity_model, device)
+            
+            
+    elif model_name == 'Naive':
+            
+        naive_model = NaiveModel(device) # Naive Common Action Pair Heuristics Baseline
+            
+        print('Common Action Pair Heuristics Model')
+            
+        ################ Cross Validation Folds #################
+            
+        TT.run_naive_folds(
+            naive_model
+            )
+            
+    elif model_name == 'Sequence':
+            
+        sequence_model = SequenceModel()
+            
+        print('Sequential Alignments')
+            
+        sequence_model.test_sequence_model()
 
-else:
+    else:
 
-     print(
-         "Incorrect Argument: Model_name should be ['Cosine_similarity', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature']"
-     )
+        print(
+            "Incorrect Argument: Model_name should be ['Cosine_similarity', 'Naive', 'Alignment-no-feature', 'Alignment-with-feature']"
+        )
 
