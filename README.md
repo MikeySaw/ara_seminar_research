@@ -44,6 +44,8 @@ and `[embedding_name]` could be one of the following:
 
 additionally `[fold]` is a number between 1 and 10:
     Here you specify on which fold to run the validation on
+
+Right now the `Naive` and `Cosine-similarity` models don't work.
     
 ## Testing
 To test the model, choose the application from the following:
