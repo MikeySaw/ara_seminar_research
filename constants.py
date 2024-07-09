@@ -21,13 +21,13 @@ Constants and File Paths
 
 # Model Constants
 
-HIDDEN_DIM1 = 1024  # Scorer hidden dimension 1
-HIDDEN_DIM2 = 1024  # Scorer hidden dimension 2
+HIDDEN_DIM1 = 128  # Scorer hidden dimension 1
+HIDDEN_DIM2 = 32  # Scorer hidden dimension 2
 OUTPUT_DIM = 1  # Classifier output_dim
-DROPOUT0 = 0.5 # Dropout-rate between encoding and hidden layer 1
-DROPOUT1 = 0.5 # Dropout-rate between hidden layer 1 and hidden layer 2
-DROPOUT2 = 0.5 # Dropout-rate after hidden layer 2
-LR = 0.00001  # Learning rate for Adam optimizer
+DROPOUT0 = 0 # Dropout-rate between encoding and hidden layer 1
+DROPOUT1 = 0 # Dropout-rate between hidden layer 1 and hidden layer 2
+DROPOUT2 = 0 # Dropout-rate after hidden layer 2
+LR = 0.0001  # Learning rate for Adam optimizer
 MAX_EPOCHS = 40  # Training Epochs
 CUDA_DEVICE = "cuda:0"  # GPU 
 PATIENCE = 250
