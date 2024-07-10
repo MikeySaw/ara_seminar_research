@@ -16,14 +16,14 @@ Just download Pandas 1.1
 
 ### Issues with CUDA compilation:
 CUDA would complain since the original paper is using a super old version of `torch==1.7.1` and the new generation of GPUs can not be compiled with old version torch, this will cause `torch.device("cuda")` unusable. \
-To solve this error, please run the following commands:   \
+To solve this error, please run the following commands:   
 ```shell
 pip uninstall torch
 pip3 install torch==1.7.1  --force-reinstall  --extra-index-url https://download.pytorch.org/whl/cu110
 ```
 
 ## Data
-To get started run the following commands to get the data: \
+To get started run the following commands to get the data: 
 ```shell
 git clone https://github.com/MikeySaw/ara_seminar_research
 git clone https://github.com/interactive-cookbook/alignment-models
