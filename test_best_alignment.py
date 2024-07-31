@@ -199,8 +199,6 @@ class Folds_Test:
 
         return correct_predictions, num_actions, results_df
 
-        return None
-
     #####################################
 
     def test(self, dish_list, embedding_name, emb_model, tokenizer, model, destination_folder, device):
@@ -724,7 +722,8 @@ class Folds_Test:
 
 
     def run_naive_folds_test( self,
-        model
+        model,
+        folder_test,
         ):
         """
         Running 10 fold cross validation for naive baseline
@@ -733,7 +732,7 @@ class Folds_Test:
         ----------
         model : NaiveModel object
             Naive Baseline model
-
+        folder_test : String, the folder with the test data
         """
 
         dish_list_test = os.listdir(folder_test)
