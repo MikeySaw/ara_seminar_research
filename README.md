@@ -60,5 +60,5 @@ Run the following command from this directory:
 
 As output, a prediction file named after the test dish(es) will be created. Here the best alignment computed for each action of the test recipes is saved.
 
-The testing script is not working currently.
+The testing script is __not__ working according to what is described in the paper and the original repo.
 
