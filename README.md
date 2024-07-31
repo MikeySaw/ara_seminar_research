@@ -2,7 +2,16 @@
 
 In this repo we will document the reproducibility issues of the paper [Aligning Actions Across Recipe Graphs](https://aclanthology.org/2021.emnlp-main.554/).
 
-![ara_seminar_recipe_zoom.png](asset/recipe_zoom.png)
+![ara_seminar_recipe_zoom.png](asset/recipe_zoom.png) 
+
+## Starting Point
+To reproduce the paper's claimed results, please start with creating the exactly same environment the paper used:
+```shell
+conda create -n ada python==3.7
+conda activate ada
+pip install -r requirements.txt
+``` 
+For compability issues, please check the next section. 
 
 ## Issues Part
 
